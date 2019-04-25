@@ -31,13 +31,15 @@ class App extends Component {
 
   render() {
     return (
-      <div className = "Testing">
-      <Layout></Layout>
-      <input onChange = {this.handleChange} type="text" value = {this.state.submit}/>
-      <input onClick = {this.handleClick} type = "submit"/>
-      <p> This is what you have to do: {this.state.toDo.map(todo => <p>{todo}</p>)}
-       </p>
+      <div className = "wrapper">
+      <input onChange = {this.handleChange} id="textField" value = {this.state.submit} type="text" class="form-control" placeholder="Enter new Task"/>
+      <button onClick = {this.handleClick} id="submitButton" type="submit" class="btn btn-primary">Submit</button>
+      <div class = "todos">
+      <p> Your List Of Things To Do: {this.state.toDo.map(todo => <li>{todo}</li>)}
+      </p>
       </div>
+      </div>
+
     );
   }
 }
