@@ -1,21 +1,24 @@
 import React, { Component } from 'react';
-import Layout from './Layout.js';
 import './App.css';
+import firebase from 'firebase'
+import Config from './Firebase/Config';
 
 class App extends Component {
-
   constructor(props){
     super(props);
+
+    this.ref = firebase.database().ref('todos/');
+
     this.state ={
-      delete: "",
       submit: "",
       toDo : [],
-      checked: false
+      string: "",
+      checked: false,
     };
     this.handleChange = this.handleChange.bind(this);
-    this.handleClick = this.handleClick.bind(this);
     this.handleCheck = this.handleCheck.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.handleClick = this.handleClick.bind(this);
   }
 
   handleChange(event) {
@@ -25,42 +28,67 @@ class App extends Component {
   }
 
   handleCheck(event){
-    let arr = this.state.toDo.filter((item) => {
-      return item != event.target.value
-    })
-    this.setState({
-      delete: event.target.value,
-      toDo : arr
-    })
+    var a = event.target.value;
+    firebase.database().ref('todos/' + a).remove();
+
   }
 
   handleKeyDown(e){
     if(e.key == "Enter") {
-      var newArray = this.state.toDo.slice();
-      newArray.push(this.state.submit);
+      this.ref.push({
+        todo: e.target.value
+      })
       this.setState({
-        submit: "",
-        toDo : newArray
-      })  
+        submit : ''
+      })
     }
   }
+
   handleClick(){
-    var newArray = this.state.toDo.slice();
-    newArray.push(this.state.submit);
+    this.ref.push({
+        todo: this.state.submit
+    })
     this.setState({
-      submit: "",
-      toDo : newArray
+      submit : ''
     })
   }
+
+  componentWillMount(){
+    const todos = this.state.toDo;
+    this.ref.on('child_added', snap => {
+      todos.push({
+        id: snap.key,
+        todo: snap.val().todo,
+      })
+      this.setState({
+        toDo: todos
+      })
+    })
+
+    this.ref.on('child_removed', snap => {
+      for(var i = 0; i < todos.length; i ++){
+        if(todos[i].id === snap.key){
+          todos.splice(i,1);
+        }
+        this.setState({
+          toDo: todos
+        })
+      }
+    })
+  }
+
 
   render() {
     return (
       <div className = "wrapper">
-      <input onChange = {this.handleChange} autofocus="autofocus" id="textField" value = {this.state.submit} type="text" class="form-control" placeholder="Enter new Task" onKeyDown={this.handleKeyDown}/>
-      <button onClick = {this.handleClick} id="submitButton" type="submit" class="btn btn-primary">Submit</button>
-      <div class = "todos">
-      <p> Your List Of Things To Do: {this.state.toDo.map(todo => <li>{todo} <button value = {todo} onClick = {this.handleCheck}> X </button> </li>)}
+      <input onChange = {this.handleChange} id="textField" value = {this.state.submit} type="text" className="form-control" placeholder="Enter new Task" onKeyDown={this.handleKeyDown}/>
+      <button onClick = {this.handleClick} id="submitButton" className= "class12" type="submit" className="btn btn-primary">Submit</button>
+      <div className = "todos">
+       <p> Your List Of Things To:{
+        (this.state.toDo.map(the => (<li key ={the.id}> {the.todo} <button value = {the.id} onClick = {this.handleCheck}> X </button> </li> )))
+      }
       </p>
+
       </div>
       </div>
 

@@ -7,12 +7,10 @@ import App from "./App.js";
 class Layout extends Component{
   render(){
     return(
-      <body>
-      <div class = "container">
-      <div class = "title"> To Do List </div>
+      <div className = "container">
+      <div className = "title"> To Do List </div>
       <App/>
       </div>
-      </body>
     )
   }
 }

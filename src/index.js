@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
 import Layout from './Layout'
 import * as serviceWorker from './serviceWorker';
+
 
 ReactDOM.render(<Layout />, document.getElementById('root'));
 
